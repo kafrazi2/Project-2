@@ -1,37 +1,28 @@
-## Welcome to GitHub Pages
+# Description
 
-You can use the [editor on GitHub](https://github.com/kafrazi2/Project-2/edit/main/README.md) to maintain and preview the content for your website in Markdown files.
+This repo includes analysis on various online news popularity data sets. In this repo, we summarize the data and then try to predict the number of shares using predictive modeling. 
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+# Packages
 
-### Markdown
+This is the list of the packages used.
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+- [`tidyverse`](https://www.tidyverse.org/): useful features for data
+    science
+- [`caret`](https://cran.r-project.org/web/packages/caret/vignettes/caret.html): set of functions that help to streamline the process for creating predictive models
+- [`knitr`](https://cran.r-project.org/web/packages/knitr/index.html):
+    a markdown friendly way to display tables
 
-```markdown
-Syntax highlighted code block
 
-# Header 1
-## Header 2
-### Header 3
+# Links
 
-- Bulleted
-- List
+These are links to the generated analyses.
 
-1. Numbered
-2. List
+- [Lifestyle articles is available here](LifestyleAnalysis.html).
+- [Entertainment articles is available here](EntertainmentAnalysis.html).
+- [Bus articles is available here](BusAnalysis.html).
+- [Socmed articles is available here](SocmedAnalysis.html).
+- [Tech articles is available here](TechAnalysis.html).
+- [World articles is available here](WorldAnalysis.html).
 
-**Bold** and _Italic_ and `Code` text
+# Code
 
-[Link](url) and ![Image](src)
-```
-
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/kafrazi2/Project-2/settings/pages). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://support.github.com/contact) and we’ll help you sort it out.
