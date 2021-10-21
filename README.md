@@ -1,6 +1,6 @@
 # Description
 
-This repo includes analysis on various online news popularity data sets. In this repo, we summarize the data and then try to predict the number of shares using predictive modeling. 
+This repo includes analysis on the [online news popularity data set](https://archive.ics.uci.edu/ml/datasets/Online+News+Popularity). It subsets the data into six documents subsetted from the data's channel name. In this repo, we summarize the data and then try to predict the number of shares using predictive modeling. 
 
 # Packages
 
