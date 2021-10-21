@@ -1,0 +1,22 @@
+---
+title: "ST 558 Project 2"
+author: "Kaylee Frazier and Rebecca Voelker"
+date: "10/31/2021"
+output: html_document
+---
+
+```{r data, message = FALSE}
+
+getwd()
+
+## Read in Raw Data Using Relative Path
+library(readr)
+rawData <- read_csv(file = "./project2_rawdata.csv") 
+rawData
+
+## Subset Data for Entertainment Data Channel
+library(dplyr)
+entertainmentData <- rawData %>% filter( data_channel_is_entertainment == 1)
+entertainmentData
+
+```
