@@ -53,6 +53,22 @@ trainDataNew
 Numerical summary of shares by day_of_the_week
 ```{r}
 #find mean, median, and standard deviation of shares by day_of_the_week
-trainDataNew %>% group_by(day_of_the_week) %>% summarise(avg_shares = mean(shares), med_shares = median(shares), sd_shares = sd(shares))
-```
+daySummary <-trainDataNew %>% group_by(day_of_the_week) %>% summarise(avg_shares = mean(shares), med_shares = median(shares), sd_shares = sd(shares))
 
+#print out numerical summary
+daySummary
+```
+In the summary plot you can see which days had the highest and lowest average shares, median shares, and look at the standard deviation to see which day had the largest range of shares.
+
+Summary table of shares by number of images
+```{r}
+#create summary table with different ranges of images
+imagesSummary <- trainDataNew %>% group_by(cut(num_imgs, c(min(num_imgs), 10, 20, 40, 60, 80, max(num_imgs)))) %>% summarise(avg_shares = mean(shares), med_shares = median(shares), sd_shares = sd(shares))
+
+#rename column name
+names(imagesSummary)[names(imagesSummary) == "cut(num_imgs, c(min(num_imgs), 10, 20, 40, 60, 80, max(num_imgs)))"] <- "image_number"
+
+#print out numerical summary
+imagesSummary
+```
+In the summary plot you can see if the amount of images affected the average, meadian, and standard deviation of shares.
