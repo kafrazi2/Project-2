@@ -41,23 +41,58 @@ rawData
 ## Subset Data for Entertainment Data Channel
 library(dplyr)
 entertainmentData <- rawData %>% filter( data_channel_is_entertainment == 1)
-entertainmentData
+
+## Create Training and Test Data Sets
+library(caret)
+set.seed(500)
+trainIndex <- createDataPartition(entertainmentData$shares, p = 0.7, list = FALSE)
+
+trainData <- entertainmentData[trainIndex,]
+testData <- entertainmentData[-trainIndex,]
+
+## Printed Out Training and Test Data Sets - Can Check if you are getting matching first ~5 Observations (Using Seed = 500)
+trainData
 ```
 
-    ## # A tibble: 7,057 x 61
+    ## # A tibble: 4,941 x 61
+    ##    url        timedelta n_tokens_title n_tokens_content n_unique_tokens
+    ##    <chr>          <dbl>          <dbl>            <dbl>           <dbl>
+    ##  1 http://ma~       731              9              531           0.504
+    ##  2 http://ma~       731             14              194           0.765
+    ##  3 http://ma~       731             12              161           0.669
+    ##  4 http://ma~       731             12              177           0.741
+    ##  5 http://ma~       731              5              356           0.618
+    ##  6 http://ma~       730             11              281           0.611
+    ##  7 http://ma~       730             10              909           0.450
+    ##  8 http://ma~       729              6              241           0.660
+    ##  9 http://ma~       729              7              376           0.569
+    ## 10 http://ma~       729             12              855           0.439
+    ## # ... with 4,931 more rows, and 56 more variables:
+    ## #   n_non_stop_words <dbl>, n_non_stop_unique_tokens <dbl>,
+    ## #   num_hrefs <dbl>, num_self_hrefs <dbl>, num_imgs <dbl>,
+    ## #   num_videos <dbl>, average_token_length <dbl>, num_keywords <dbl>,
+    ## #   data_channel_is_lifestyle <dbl>,
+    ## #   data_channel_is_entertainment <dbl>, data_channel_is_bus <dbl>,
+    ## #   data_channel_is_socmed <dbl>, data_channel_is_tech <dbl>, ...
+
+``` r
+testData
+```
+
+    ## # A tibble: 2,116 x 61
     ##    url        timedelta n_tokens_title n_tokens_content n_unique_tokens
     ##    <chr>          <dbl>          <dbl>            <dbl>           <dbl>
     ##  1 http://ma~       731             12              219           0.664
-    ##  2 http://ma~       731              9              531           0.504
-    ##  3 http://ma~       731             14              194           0.765
-    ##  4 http://ma~       731             12              161           0.669
-    ##  5 http://ma~       731             11              454           0.566
-    ##  6 http://ma~       731             12              177           0.741
-    ##  7 http://ma~       731              5              356           0.618
-    ##  8 http://ma~       730             11              281           0.611
-    ##  9 http://ma~       730             10              909           0.450
-    ## 10 http://ma~       729             10              413           0.606
-    ## # ... with 7,047 more rows, and 56 more variables:
+    ##  2 http://ma~       731             11              454           0.566
+    ##  3 http://ma~       729             10              413           0.606
+    ##  4 http://ma~       729              9               81           0.787
+    ##  5 http://ma~       729             11              308           0.633
+    ##  6 http://ma~       729              8              345           0.604
+    ##  7 http://ma~       729             11              289           0.649
+    ##  8 http://ma~       729             11              272           0.524
+    ##  9 http://ma~       729             11              277           0.450
+    ## 10 http://ma~       728             13              204           0.646
+    ## # ... with 2,106 more rows, and 56 more variables:
     ## #   n_non_stop_words <dbl>, n_non_stop_unique_tokens <dbl>,
     ## #   num_hrefs <dbl>, num_self_hrefs <dbl>, num_imgs <dbl>,
     ## #   num_videos <dbl>, average_token_length <dbl>, num_keywords <dbl>,
