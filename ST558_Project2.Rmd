@@ -17,6 +17,17 @@ rawData
 ## Subset Data for Entertainment Data Channel
 library(dplyr)
 entertainmentData <- rawData %>% filter( data_channel_is_entertainment == 1)
-entertainmentData
+
+## Create Training and Test Data Sets
+library(caret)
+set.seed(500)
+trainIndex <- createDataPartition(entertainmentData$shares, p = 0.7, list = FALSE)
+
+trainData <- entertainmentData[trainIndex,]
+testData <- entertainmentData[-trainIndex,]
+
+## Printed Out Training and Test Data Sets - Can Check if you are getting matching first ~5 Observations (Using Seed = 500)
+trainData
+testData
 
 ```
