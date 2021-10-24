@@ -82,6 +82,9 @@ library(ggplot2)
 #Convert is_weekend to a Factor
 trainData$is_weekend <- factor(trainData$is_weekend)
 
+#Table of Publications on Weekdays vs. Weekend 
+table(trainData$is_weekend)
+
 #Create a Scatter Plot of # of Words by Shares
 g1 <- ggplot(trainData, aes(x = n_tokens_content, y = shares)) + 
   geom_point(aes(col = is_weekend)) + 
@@ -124,4 +127,32 @@ cor(trainData$abs_title_sentiment_polarity, trainData$shares)
 
 ```
 
-### ### We can inspect the trend of shares as a function of the polarity of the title of the content. If the points show an upward trend, then content with a more polarizing title (positive or negative) tends to be shared more often.If we see a negative trend then content with more a more polarizing title (positive or negative) tends to be shared less often. The color-coding specifies the length of the title. The correlation, shows us the numerical value of the correlation between our predictor variable(s) and response
+### We can inspect the trend of shares as a function of the polarity of the title of the content. If the points show an upward trend, then content with a more polarizing title (positive or negative) tends to be shared more often.If we see a negative trend then content with more a more polarizing title (positive or negative) tends to be shared less often. The color-coding specifies the length of the title. The correlation, shows us the numerical value of the correlation between our predictor variable(s) and response
+
+## Modeling
+
+### Linear Model
+
+```{r linearRV}
+
+## Fit Multiple Linear Regression Model
+fitLM <- train(shares ~ n_tokens_content + is_weekend, data = trainData, method = "lm", trControl = trainControl(method = "cv", number = 10))
+fitLM 
+
+```
+
+### Boosted Tree Model
+
+```{r boost}
+```
+
+### How to Pick Values for Tuning Parameters?
+### Commenting Out Until Above Question is Answered
+n.trees <- 1:100
+interaction.depth <- 1:10
+shrinkage <- 1:10
+n.minobsinnode <- 1:10
+df <- expand.grid(n.trees = n.trees, interaction.depth = interaction.depth, shrinkage = shrinkage, n.minobsinnode = n.minobsinnode)
+
+boostFit <- train(shares ~ ., data = trainData, method = "gbm", trControl = trainControl(method = "cv", number = 5), tuneGrid = df)
+
