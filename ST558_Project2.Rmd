@@ -4,7 +4,7 @@ author: "Kaylee Frazier and Rebecca Voelker"
 date: "10/31/2021"
 output: html_document
 ---
-```{r}
+```{r, warning = FALSE}
 #read in library
 library(tidyverse)
 ```
@@ -31,11 +31,11 @@ trainIndex <- createDataPartition(entertainmentData$shares, p = 0.7, list = FALS
 trainData <- entertainmentData[trainIndex,]
 testData <- entertainmentData[-trainIndex,]
 
-## Printed Out Training and Test Data Sets - Can Check if you are getting matching first ~5 Observations (Using Seed = 500)
 trainData
 testData
 
 ```
+
 Create new variable day_of_the_week
 ```{r}
 #mutate new variable using weekday_is_() variables
@@ -71,4 +71,88 @@ names(imagesSummary)[names(imagesSummary) == "cut(num_imgs, c(min(num_imgs), 10,
 #print out numerical summary
 imagesSummary
 ```
-In the summary plot you can see if the amount of images affected the average, meadian, and standard deviation of shares.
+In the summary plot you can see if the amount of images affected the average, median, and standard deviation of shares.
+
+## Exploratory Data Analysis (EDA)
+
+```{r EDA1}
+
+library(ggplot2)
+
+#Convert is_weekend to a Factor
+trainData$is_weekend <- factor(trainData$is_weekend)
+
+#Table of Publications on Weekdays vs. Weekend 
+table(trainData$is_weekend)
+
+#Create a Scatter Plot of # of Words by Shares
+g1 <- ggplot(trainData, aes(x = n_tokens_content, y = shares)) + 
+  geom_point(aes(col = is_weekend)) + 
+    geom_smooth(method = "lm", aes(col = is_weekend)) 
+g1
+```
+
+### We can inspect the trend of shares as a function of the number of words (tokens) in the content. If the points show an upward trend, then content with more words tends to be shared more often.If we see a negative trend then content with more words tends to be shared less often. The color-coding specifies if the content was published on a Weekday or Weekend.
+
+```{r EDA 2}
+
+#Create a Box Plot of Weekend vs. Weekday by Shares
+g2 <- ggplot(trainData, aes(x = is_weekend, y = shares)) +
+  geom_boxplot()
+g2
+
+#Generate a Numerical Summary of Data Summarized in our Box Plot 
+trainData %>% group_by(is_weekend) %>% summarise(min = min(shares), med = median(shares), max = max(shares), mean = mean(shares))
+
+```
+
+### We can inspect the trend of shares as a function of Weekday vs. Weekend Publications. The statistics show the Minimum, Maximum, Median, and Average # of Shares by Week (Published During the Week) vs. Weekend (Published During the Weekend)
+
+```{r EDA 3}
+
+table(trainData$n_tokens_title)
+
+#Create New Variable that Measures Title Length
+trainData <- trainData %>% mutate(TitleLength = if_else(n_tokens_title <= 10, "Short Title",
+  if_else(n_tokens_title <= 15, "Medium Title", "Long Title")))
+
+# Create a Scatter Plot of Polarity of Title by Shares
+g3 <- ggplot(trainData, aes(x = abs_title_sentiment_polarity, y = shares)) + 
+  geom_point(aes(col = TitleLength)) + 
+    geom_smooth(method = "lm", aes(col = TitleLength)) 
+g3
+
+# Numerical Correlation of Polarity of Title by Shares
+cor(trainData$abs_title_sentiment_polarity, trainData$shares)
+
+```
+
+### We can inspect the trend of shares as a function of the polarity of the title of the content. If the points show an upward trend, then content with a more polarizing title (positive or negative) tends to be shared more often.If we see a negative trend then content with more a more polarizing title (positive or negative) tends to be shared less often. The color-coding specifies the length of the title. The correlation, shows us the numerical value of the correlation between our predictor variable(s) and response
+
+## Modeling
+
+### Linear Model
+
+```{r linearRV}
+
+## Fit Multiple Linear Regression Model
+fitLM <- train(shares ~ n_tokens_content + is_weekend, data = trainData, method = "lm", trControl = trainControl(method = "cv", number = 10))
+fitLM 
+
+```
+
+### Boosted Tree Model
+
+```{r boost}
+```
+
+### How to Pick Values for Tuning Parameters?
+### Commenting Out Until Above Question is Answered
+n.trees <- 1:100
+interaction.depth <- 1:10
+shrinkage <- 1:10
+n.minobsinnode <- 1:10
+df <- expand.grid(n.trees = n.trees, interaction.depth = interaction.depth, shrinkage = shrinkage, n.minobsinnode = n.minobsinnode)
+
+boostFit <- train(shares ~ ., data = trainData, method = "gbm", trControl = trainControl(method = "cv", number = 5), tuneGrid = df)
+
