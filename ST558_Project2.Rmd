@@ -71,4 +71,4 @@ names(imagesSummary)[names(imagesSummary) == "cut(num_imgs, c(min(num_imgs), 10,
 #print out numerical summary
 imagesSummary
 ```
-In the summary plot you can see if the amount of images affected the average, meadian, and standard deviation of shares.
+In the summary plot you can see if the amount of images affected the average, median, and standard deviation of shares.
