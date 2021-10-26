@@ -13,8 +13,9 @@ This is the list of the packages used.
 - [`tidyverse`](https://www.tidyverse.org/): useful features for data
     science
 - [`caret`](https://cran.r-project.org/web/packages/caret/vignettes/caret.html): set of functions that help to streamline the process for creating predictive models
-- [`knitr`](https://cran.r-project.org/web/packages/knitr/index.html):
-    a markdown friendly way to display tables
+- [`knitr`](https://cran.r-project.org/web/packages/knitr/index.html): a markdown friendly way to display tables
+- [`ggplot2`](https://ggplot2.tidyverse.org/): a package for making graphs and visualizations
+- [`randomForest`](https://www.rdocumentation.org/packages/randomForest/versions/4.6-14/topics/randomForest): helps create random forest models
     
 # Links 
 
