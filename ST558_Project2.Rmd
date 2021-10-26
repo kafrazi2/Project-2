@@ -4,6 +4,30 @@ author: "Kaylee Frazier and Rebecca Voelker"
 date: "10/31/2021"
 output: html_document
 ---
+
+## Introduction
+
+#### The following is an analysis of online news popularity across a variety of channels. This analysis covers the following 6 data channels: 
+  1. Lifestyle
+  2. Entertainment
+  3. Business 
+  4. Social Media
+  5. Tech
+  6. World
+
+#### The following report analyzes the # of shares of a particular piece of content as a function of a variety of variables, including;
+  + - # of Images in the Content (num_imgs)
+  + - # of Videos in the Content (num_videos)
+  + - Week vs. Weekend Publications (is_weekend) 
+  + - # of Words in the Content (n_tokens_content)
+  + - # of Words in the Title (n_tokens_titel)
+  + - Polarity of the Content Title (abs_title_sentiment_polarity)
+
+#### A few new variables were created, as well, which are described alongside the respective R Code.
+
+#### As a part of our analysis, we modeled each of our predictive variables linearly (SLR and MLR), as well as via Random Forest and Boosted Tree Models. The various models were then compared against one another to select our final model, which was fit to our test data.
+
+
 ```{r, warning = FALSE}
 #read in library
 library(tidyverse)
@@ -192,11 +216,23 @@ cor(trainData$abs_title_sentiment_polarity, trainData$shares)
 
 ### Linear Model
 
-```{r linearRV}
+#### This Multiple Linear Regression Model looks at the # of Shares as a function of the # of Words in the Content AND whether or not the Content was published on a Weekend (0 = No, 1 = Yes)
+
+```{r linearRV1}
 
 ## Fit Multiple Linear Regression Model
-fitLM <- train(shares ~ n_tokens_content + is_weekend, data = trainData, method = "lm", trControl = trainControl(method = "cv", number = 10))
-fitLM 
+fitLM1 <- train(shares ~ n_tokens_content + is_weekend, data = trainData, method = "lm", trControl = trainControl(method = "cv", number = 10))
+fitLM1 
+
+```
+
+#### This Multiple Linear Regression Model looks at the # of Shares as a function of the # the Quadratic of Title Polarity Sentiment AND the Title Length (Short, Medium, Long)
+
+```{r linearRV2}
+
+## Fit Multiple Linear Regression Model
+fitLM2 <- train(shares ~ abs_title_sentiment_polarity^2 + TitleLength, data = trainData, method = "lm", trControl = trainControl(method = "cv", number = 10))
+fitLM2
 
 ```
 
@@ -208,13 +244,38 @@ fitLM
 ```
 
 ### How to Pick Values for Tuning Parameters?
-### Commenting Out Until Above Question is Answered
-n.trees <- 1:100
-interaction.depth <- 1:10
-shrinkage <- 1:10
-n.minobsinnode <- 1:10
+
+n.trees <- c(25, 50,100, 150, 250)
+interaction.depth <- 1:4
+shrinkage <- 0.1
+n.minobsinnode <- 10
+
 df <- expand.grid(n.trees = n.trees, interaction.depth = interaction.depth, shrinkage = shrinkage, n.minobsinnode = n.minobsinnode)
 
 boostFit <- train(shares ~ ., data = trainData, method = "gbm", trControl = trainControl(method = "cv", number = 5), tuneGrid = df)
 
->>>>>>> 6f0f770add5d1bc2fa1f73d0c61f24cdbab9e1d2
+## Model Comparison and Selection 
+
+```{r comparison}
+
+## Add RF and Boosted Models ##
+
+df<- data.frame(t(fit1$results), t(fit2$results), t(fit3$results), t(fitLM$results))
+
+df
+
+```
+
+#### Results of Model Selection HERE ####
+
+### Model Selection 
+
+```{r selection, warning = FALSE}
+
+## Update with Best Model Selection ##
+
+## Fit Best Model to Test Data
+pred <- predict(fiLM, newdata = testData)
+confusionMatrix(testData$shares, pred)
+
+```
