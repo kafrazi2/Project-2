@@ -133,24 +133,38 @@ g7 + geom_point() +
 ```
 In this scatter plot of the number of videos vs. shares, you can see the relationship between the two variables. If it shows an upward trend, articles with more videos tend to be shared more often. If the trend is negative, then articles with less videos tend to be shared more.
 
-Fit linear regression model
+# Linear regression model
 
-First linear fit with day of the week as predictor and shares as response.
+A linear regression model allows for easy prediction of a response variable. It's goal is to figure out which variables are significant predictors of the response variable and how do they impact it. 
+
+
+Linear regression model fit with day of the week, number of images, and number of videos as predictors and shares as response.
 ```{r}
-fit1 <- train(shares ~ day_of_the_week, data = trainDataNew, method = "lm", trControl = trainControl(method = "cv", number = 10))
-fit1
+#create fit using shares as response, day_of_the_week, num_imgs, and num_videos as the predictors
+lmFit <- train(shares ~ day_of_the_week + num_imgs + num_videos, data = trainDataNew, 
+#method is linear model
+              method = "lm", 
+#center and scale the data
+                preProcess = c("center", "scale"),
+#10 fold cross validation
+              trControl = trainControl(method = "cv", number = 10))
+lmFit
 ```
 
-Second linear fit with day of the week, number of images, and number of videos as predictors and shares as response.
-```{r}
-fit2 <- train(shares ~ day_of_the_week + num_imgs + num_videos, data = trainDataNew, method = "lm", trControl = trainControl(method = "cv", number = 10))
-fit2
-```
+# Random Forest Model
 
-Third linear fit with the interaction of day of the week and number of images and shares as response.
-```{r}
-fit3 <- train(shares ~ day_of_the_week*num_imgs, data = trainDataNew, method = "lm", trControl = trainControl(method = "cv", number = 10))
-fit3
+Random forest modeling is a type of ensemble model that creates multiple trees from bootstrap samples without using all the predictors and a random subset of predictors for each sample. It then averages the results from the multiple trees.
+
+```{r, cache= TRUE}
+#use train function
+rfFit <- train(shares ~ ., data = trainDataNew,
+#use rf method
+               method = "rf",
+#10 fold validation
+               trControl = trainControl(method = "cv", number = 5),
+#consider values of mtry 
+               tuneGrid = data.frame(mtry = 1:8))
+rfFit
 ```
 
 <<<<<<< HEAD
