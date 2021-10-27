@@ -173,7 +173,7 @@ rfFit
 
 ## Exploratory Data Analysis (EDA)
 
-```{r EDA1}
+```{r EDA1, message = false}
 
 library(ggplot2)
 
@@ -252,45 +252,56 @@ fitLM2
 ```
 
 
-
 ### Boosted Tree Model
 
 ```{r boost}
-```
 
-### How to Pick Values for Tuning Parameters?
-
-n.trees <- c(25, 50,100, 150, 250)
+n.trees <- c(5, 10, 25, 100)
 interaction.depth <- 1:4
 shrinkage <- 0.1
 n.minobsinnode <- 10
 
 df <- expand.grid(n.trees = n.trees, interaction.depth = interaction.depth, shrinkage = shrinkage, n.minobsinnode = n.minobsinnode)
 
-boostFit <- train(shares ~ ., data = trainData, method = "gbm", trControl = trainControl(method = "cv", number = 5), tuneGrid = df)
+boostFit <- train(shares ~ abs_title_sentiment_polarity^2 + TitleLength, data = trainData, method = "gbm", trControl = trainControl(method = "cv", number = 5), tuneGrid = df)
+
+boostFit$results
+boostFit$bestTune
+
+```
 
 ## Model Comparison and Selection 
 
 ```{r comparison}
 
-## Add RF and Boosted Models ##
+## Add RF Model ##
 
-df<- data.frame(t(fit1$results), t(fit2$results), t(fit3$results), t(fitLM$results))
-
+## Combine Linear Model RMSEs into Table
+df<- data.frame(t(lmFit$results), t(fitLM1$results), t(fitLM2$results))
 df
+
+#Add New Variables (Title Length and Day of the Week) to Test Data
+testData <- testData %>% mutate(TitleLength = if_else(n_tokens_title <= 10, "Short Title",
+  if_else(n_tokens_title <= 15, "Medium Title", "Long Title")))
+
+testData <- testData %>% mutate(day_of_the_week =   if_else(weekday_is_monday == 1, "Monday",
+       if_else(weekday_is_tuesday == 1, "Tuesday",
+               if_else(weekday_is_wednesday == 1, "Wednesday",
+                      if_else(weekday_is_thursday == 1, "Thursday",
+                              if_else(weekday_is_friday == 1, "Friday",
+                                      if_else(weekday_is_saturday == 1, "Saturday", "Sunday"
+                                              ))))))) 
+
+## Obtain RMSE for Random Forest Model
+predRF <- predict(rfFit, newdata = testData)
+postResample(predRF, testData$shares)
+
+## Obtain RMSE for Boosted Fit Model
+predBoost <- predict(boostFit, newdata = testData)
+postResample(predBoost, testData$shares)
 
 ```
 
 #### Results of Model Selection HERE ####
 
-### Model Selection 
 
-```{r selection, warning = FALSE}
-
-## Update with Best Model Selection ##
-
-## Fit Best Model to Test Data
-pred <- predict(fiLM, newdata = testData)
-confusionMatrix(testData$shares, pred)
-
-```
