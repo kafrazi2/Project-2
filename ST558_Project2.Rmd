@@ -75,99 +75,6 @@ trainDataNew <- trainData %>% mutate(day_of_the_week =   if_else(weekday_is_mond
 trainDataNew
 ```
 
-
-Numerical summary of shares by day_of_the_week
-```{r}
-#find mean, median, and standard deviation of shares by day_of_the_week
-daySummary <-trainDataNew %>% group_by(day_of_the_week) %>% summarise(avg_shares = mean(shares), med_shares = median(shares), sd_shares = sd(shares))
-
-#print out numerical summary
-daySummary
-```
-In the summary plot you can see which days had the highest and lowest average shares, median shares, and look at the standard deviation to see which day had the largest range of shares.
-
-Bar chart of shares by day of the week
-```{r}
-#create a basic plot with x and y variables
-g5 <- ggplot(data = trainDataNew, aes(day_of_the_week, shares))
-#make the plot a bar chart
-g5 + geom_col(aes(fill = day_of_the_week), position = "dodge") + 
-#change the angle of the words to fit 
-  guides(x = guide_axis(angle = 45)) +
-  labs(title = "Day of the Week vs. Shares") +
-#get rid of legend
-  theme(legend.position = "none")
-```
-In this bar chart of day of the week vs. shares, you can see which days had the greatest total number of shares and which had the lowest. 
-
-Summary table of shares by number of images
-```{r}
-#create summary table with different ranges of images
-imagesSummary <- trainData %>% group_by(cut(num_imgs, c(min(num_imgs), 10, 20, 40, 60, 80, max(num_imgs)))) %>% summarise(avg_shares = mean(shares), med_shares = median(shares), sd_shares = sd(shares))
-
-#rename column name
-names(imagesSummary)[names(imagesSummary) == "cut(num_imgs, c(min(num_imgs), 10, 20, 40, 60, 80, max(num_imgs)))"] <- "image_number"
-
-#print out numerical summary
-imagesSummary
-```
-In the summary plot you can see if the amount of images affected the average, median, and standard deviation of shares.
-
-
-Scatter plot of the image number and shares.
-```{r}
-#create basic plot with x and y
-g6 <- ggplot(trainData, aes(x = num_imgs, y = shares))  
-#make it a scatter plot with regression line
-g6 + geom_point() + 
-    geom_smooth(method = "lm")
-```
-In this scatter plot of the number of images vs. shares, you can see the relationship between the two variables. If it shows an upward trend, articles with more images tend to be shared more often. If the trend is negative, then articles with less images tend to be shared more.
-
-Scatter plot of the number of videos and shares.
-```{r}
-#create basic plot with x and y
-g7 <- ggplot(trainData, aes(x = num_videos, y = shares))  
-#make it a scatter plot with regression line
-g7 + geom_point() + 
-    geom_smooth(method = "lm")
-```
-In this scatter plot of the number of videos vs. shares, you can see the relationship between the two variables. If it shows an upward trend, articles with more videos tend to be shared more often. If the trend is negative, then articles with less videos tend to be shared more.
-
-# Linear regression model
-
-A linear regression model allows for easy prediction of a response variable. It's goal is to figure out which variables are significant predictors of the response variable and how do they impact it. 
-
-
-Linear regression model fit with day of the week, number of images, and number of videos as predictors and shares as response.
-```{r}
-#create fit using shares as response, day_of_the_week, num_imgs, and num_videos as the predictors
-lmFit <- train(shares ~ day_of_the_week + num_imgs + num_videos, data = trainDataNew, 
-#method is linear model
-              method = "lm", 
-#center and scale the data
-                preProcess = c("center", "scale"),
-#10 fold cross validation
-              trControl = trainControl(method = "cv", number = 10))
-lmFit
-```
-
-# Random Forest Model
-
-Random forest modeling is a type of ensemble model that creates multiple trees from bootstrap samples without using all the predictors and a random subset of predictors for each sample. It then averages the results from the multiple trees.
-
-```{r, cache= TRUE}
-#use train function
-rfFit <- train(shares ~ day_of_the_week + num_imgs + num_videos + n_tokens_content, data = trainDataNew,
-#use rf method
-               method = "rf",
-#5 fold validation
-               trControl = trainControl(method = "cv", number = 5),
-#consider values of mtry 
-               tuneGrid = data.frame(mtry = 1:4))
-rfFit
-```
-
 <<<<<<< HEAD
 =======
 
@@ -227,9 +134,68 @@ cor(trainData$abs_title_sentiment_polarity, trainData$shares)
 
 ### We can inspect the trend of shares as a function of the polarity of the title of the content. If the points show an upward trend, then content with a more polarizing title (positive or negative) tends to be shared more often.If we see a negative trend then content with more a more polarizing title (positive or negative) tends to be shared less often. The color-coding specifies the length of the title. The correlation, shows us the numerical value of the correlation between our predictor variable(s) and response
 
+### Numerical summary of shares by day_of_the_week
+```{r EDA 4}
+#find mean, median, and standard deviation of shares by day_of_the_week
+daySummary <-trainDataNew %>% group_by(day_of_the_week) %>% summarise(avg_shares = mean(shares), med_shares = median(shares), sd_shares = sd(shares))
+
+#print out numerical summary
+daySummary
+```
+### In the summary plot you can see which days had the highest and lowest average shares, median shares, and look at the standard deviation to see which day had the largest range of shares.
+
+### Bar chart of shares by day of the week
+```{r EDA 5}
+#create a basic plot with x and y variables
+g5 <- ggplot(data = trainDataNew, aes(day_of_the_week, shares))
+#make the plot a bar chart
+g5 + geom_col(aes(fill = day_of_the_week), position = "dodge") + 
+#change the angle of the words to fit 
+  guides(x = guide_axis(angle = 45)) +
+  labs(title = "Day of the Week vs. Shares") +
+#get rid of legend
+  theme(legend.position = "none")
+```
+### In this bar chart of day of the week vs. shares, you can see which days had the greatest total number of shares and which had the lowest. 
+
+### Summary table of shares by number of images
+```{r EDA 6}
+#create summary table with different ranges of images
+imagesSummary <- trainData %>% group_by(cut(num_imgs, c(min(num_imgs), 10, 20, 40, 60, 80, max(num_imgs)))) %>% summarise(avg_shares = mean(shares), med_shares = median(shares), sd_shares = sd(shares))
+
+#rename column name
+names(imagesSummary)[names(imagesSummary) == "cut(num_imgs, c(min(num_imgs), 10, 20, 40, 60, 80, max(num_imgs)))"] <- "image_number"
+
+#print out numerical summary
+imagesSummary
+```
+### In the summary plot you can see if the amount of images affected the average, median, and standard deviation of shares.
+
+### Scatter plot of the image number and shares.
+```{r EDA 7}
+#create basic plot with x and y
+g6 <- ggplot(trainData, aes(x = num_imgs, y = shares))  
+#make it a scatter plot with regression line
+g6 + geom_point() + 
+    geom_smooth(method = "lm")
+```
+### In this scatter plot of the number of images vs. shares, you can see the relationship between the two variables. If it shows an upward trend, articles with more images tend to be shared more often. If the trend is negative, then articles with less images tend to be shared more.
+
+### Scatter plot of the number of videos and shares.
+```{r EDA 8}
+#create basic plot with x and y
+g7 <- ggplot(trainData, aes(x = num_videos, y = shares))  
+#make it a scatter plot with regression line
+g7 + geom_point() + 
+    geom_smooth(method = "lm")
+```
+### In this scatter plot of the number of videos vs. shares, you can see the relationship between the two variables. If it shows an upward trend, articles with more videos tend to be shared more often. If the trend is negative, then articles with less videos tend to be shared more.
+
 ## Modeling
 
-### Linear Model
+### Linear Regression Model
+
+A linear regression model allows for easy prediction of a response variable. It's goal is to figure out which variables are significant predictors of the response variable and how do they impact it. 
 
 #### This Multiple Linear Regression Model looks at the # of Shares as a function of the # of Words in the Content AND whether or not the Content was published on a Weekend (0 = No, 1 = Yes)
 
@@ -240,7 +206,6 @@ fitLM1 <- train(shares ~ n_tokens_content + is_weekend, data = trainData, method
 fitLM1 
 
 ```
-
 #### This Multiple Linear Regression Model looks at the # of Shares as a function of the # the Quadratic of Title Polarity Sentiment AND the Title Length (Short, Medium, Long)
 
 ```{r linearRV2}
@@ -250,7 +215,35 @@ fitLM2 <- train(shares ~ abs_title_sentiment_polarity^2 + TitleLength, data = tr
 fitLM2
 
 ```
+### This multiple linear regression model looks at day of the week, number of images, and number of videos as predictors and shares as response.
+```{r linearRV3}
 
+#create fit using shares as response, day_of_the_week, num_imgs, and num_videos as the predictors
+fitLM3 <- train(shares ~ day_of_the_week + num_imgs + num_videos, data = trainDataNew, 
+#method is linear model
+              method = "lm", 
+#center and scale the data
+                preProcess = c("center", "scale"),
+#10 fold cross validation
+              trControl = trainControl(method = "cv", number = 10))
+fitLM3
+```
+
+## Random Forest Model
+
+Random forest modeling is a type of ensemble model that creates multiple trees from bootstrap samples without using all the predictors and a random subset of predictors for each sample. It then averages the results from the multiple trees.
+
+```{r randForest, cache= TRUE}
+#use train function
+rfFit <- train(shares ~ day_of_the_week + num_imgs + num_videos + n_tokens_content, data = trainDataNew,
+#use rf method
+               method = "rf",
+#5 fold validation
+               trControl = trainControl(method = "cv", number = 5),
+#consider values of mtry 
+               tuneGrid = data.frame(mtry = 1:4))
+rfFit
+```
 
 ### Boosted Tree Model
 
@@ -277,7 +270,7 @@ boostFit$bestTune
 ## Add RF Model ##
 
 ## Combine Linear Model RMSEs into Table
-df<- data.frame(t(lmFit$results), t(fitLM1$results), t(fitLM2$results))
+df<- data.frame(t(fitLM1$results), t(fitLM2$results), t(fitLM3$results))
 df
 
 #Add New Variables (Title Length and Day of the Week) to Test Data
