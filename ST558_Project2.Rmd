@@ -18,32 +18,39 @@ params:
   6. World
 
 #### The following report analyzes the # of shares of a particular piece of content as a function of a variety of variables, including;
-  + - # of Images in the Content (num_imgs)
-  + - # of Videos in the Content (num_videos)
-  + - Week vs. Weekend Publications (is_weekend) 
-  + - # of Words in the Content (n_tokens_content)
-  + - # of Words in the Title (n_tokens_titel)
-  + - Polarity of the Content Title (abs_title_sentiment_polarity)
+  + Number of Images in the Content (num_imgs)
+  + Number of Videos in the Content (num_videos)
+  + Week vs. Weekend Publications (is_weekend) 
+  + Number of Words in the Content (n_tokens_content)
+  + Number of Words in the Title (n_tokens_titel)
+  + Polarity of the Content Title (abs_title_sentiment_polarity)
 
 #### A few new variables were created, as well, which are described alongside the respective R Code.
 
-#### As a part of our analysis, we modeled each of our predictive variables linearly (SLR and MLR), as well as via Random Forest and Boosted Tree Models. The various models were then compared against one another to select our final model, which was fit to our test data.
+#### As a part of our analysis, we modeled each of our predictive variables linearly, as well as via Random Forest and Boosted Tree Models. The various models were then compared against one another to select our final model, which was fit to our test data.
 
 
-```{r, warning = FALSE}
-#read in library
+```{r, warning = FALSE, message = FALSE}
+
+#Read in Libraries
+
 library(tidyverse)
+library(readr)
 library(ggplot2)
 library(randomForest)
+library(shiny)
+library(dplyr)
+library(caret)
+
 ```
 
 
 ```{r data, message = FALSE}
 
+## Check Working Directory Path
 getwd()
 
 ## Read in Raw Data Using Relative Path
-library(readr)
 rawData <- read_csv(file = "./project2_rawdata.csv") 
 rawData
 
@@ -56,11 +63,9 @@ rawDataNew <- rawData %>% mutate(data_channel =   if_else(data_channel_is_bus ==
                               if_else(data_channel_is_tech == 1, "Tech", "World"))))))
 
 ## Subset Data for Respective Data Channel
-library(dplyr)
-subsetData <- rawDataNew %>% filter( datachannel == params$data_channel)
+subsetData <- rawDataNew %>% filter(data_channel == params$data_channel)
 
 ## Create Training and Test Data Sets
-library(caret)
 set.seed(500)
 trainIndex <- createDataPartition(subsetData$shares, p = 0.7, list = FALSE)
 
@@ -72,9 +77,18 @@ testData
 
 ```
 
-### Create new variable day_of_the_week
+=======
+
+## Exploratory Data Analysis (EDA)
+
+### Create New Variables for EDA
 ```{r}
-#mutate new variable using weekday_is_() variables
+
+#Create New Variable that Measures Title Length
+trainData <- trainData %>% mutate(TitleLength = if_else(n_tokens_title <= 10, "Short Title",
+  if_else(n_tokens_title <= 15, "Medium Title", "Long Title")))
+
+#Create New variable using weekday_is_() variables
 trainDataNew <- trainData %>% mutate(day_of_the_week =   if_else(weekday_is_monday == 1, "Monday",
        if_else(weekday_is_tuesday == 1, "Tuesday",
                if_else(weekday_is_wednesday == 1, "Wednesday",
@@ -85,13 +99,9 @@ trainDataNew <- trainData %>% mutate(day_of_the_week =   if_else(weekday_is_mond
 trainDataNew
 ```
 
-=======
 
-## Exploratory Data Analysis (EDA)
-
+### Graphical summary of shares by Content Length and Weekday vs. Weekend
 ```{r EDA1, message = FALSE}
-
-library(ggplot2)
 
 #Convert is_weekend to a Factor
 trainData$is_weekend <- factor(trainData$is_weekend)
@@ -106,8 +116,9 @@ g1 <- ggplot(trainData, aes(x = n_tokens_content, y = shares)) +
 g1
 ```
 
-### We can inspect the trend of shares as a function of the number of words (tokens) in the content. If the points show an upward trend, then content with more words tends to be shared more often.If we see a negative trend then content with more words tends to be shared less often. The color-coding specifies if the content was published on a Weekday or Weekend.
+#### We can inspect the trend of shares as a function of the number of words (tokens) in the content. If the points show an upward trend, then content with more words tends to be shared more often.If we see a negative trend then content with more words tends to be shared less often. The color-coding specifies if the content was published on a Weekday or Weekend.
 
+### Graphical and Numerical summary of shares by Weekday vs. Weekend
 ```{r EDA 2}
 
 #Create a Box Plot of Weekend vs. Weekday by Shares
@@ -120,15 +131,12 @@ trainData %>% group_by(is_weekend) %>% summarise(min = min(shares), med = median
 
 ```
 
-### We can inspect the trend of shares as a function of Weekday vs. Weekend Publications. The statistics show the Minimum, Maximum, Median, and Average # of Shares by Week (Published During the Week) vs. Weekend (Published During the Weekend)
+#### We can inspect the trend of shares as a function of Weekday vs. Weekend Publications. The statistics show the Minimum, Maximum, Median, and Average # of Shares by Week (Published During the Week) vs. Weekend (Published During the Weekend)
 
+### Graphical and Numerical summary of shares by Title Polarity and Length
 ```{r EDA 3}
 
 table(trainData$n_tokens_title)
-
-#Create New Variable that Measures Title Length
-trainData <- trainData %>% mutate(TitleLength = if_else(n_tokens_title <= 10, "Short Title",
-  if_else(n_tokens_title <= 15, "Medium Title", "Long Title")))
 
 # Create a Scatter Plot of Polarity of Title by Shares
 g3 <- ggplot(trainData, aes(x = abs_title_sentiment_polarity, y = shares)) + 
@@ -141,7 +149,7 @@ cor(trainData$abs_title_sentiment_polarity, trainData$shares)
 
 ```
 
-### We can inspect the trend of shares as a function of the polarity of the title of the content. If the points show an upward trend, then content with a more polarizing title (positive or negative) tends to be shared more often.If we see a negative trend then content with more a more polarizing title (positive or negative) tends to be shared less often. The color-coding specifies the length of the title. The correlation, shows us the numerical value of the correlation between our predictor variable(s) and response
+#### We can inspect the trend of shares as a function of the polarity of the title of the content. If the points show an upward trend, then content with a more polarizing title (positive or negative) tends to be shared more often.If we see a negative trend then content with more a more polarizing title (positive or negative) tends to be shared less often. The color-coding specifies the length of the title. The correlation, shows us the numerical value of the correlation between our predictor variable(s) and response
 
 ### Numerical summary of shares by day_of_the_week
 ```{r EDA 4}
@@ -151,7 +159,8 @@ daySummary <-trainDataNew %>% group_by(day_of_the_week) %>% summarise(avg_shares
 #print out numerical summary
 daySummary
 ```
-### In the summary plot you can see which days had the highest and lowest average shares, median shares, and look at the standard deviation to see which day had the largest range of shares.
+
+#### In the summary plot you can see which days had the highest and lowest average shares, median shares, and look at the standard deviation to see which day had the largest range of shares.
 
 ### Bar chart of shares by day of the week
 ```{r EDA 5}
@@ -165,7 +174,8 @@ g5 + geom_col(aes(fill = day_of_the_week), position = "dodge") +
 #get rid of legend
   theme(legend.position = "none")
 ```
-### In this bar chart of day of the week vs. shares, you can see which days had the greatest total number of shares and which had the lowest. 
+
+#### In this bar chart of day of the week vs. shares, you can see which days had the greatest total number of shares and which had the lowest. 
 
 ### Summary table of shares by number of images
 ```{r EDA 6}
@@ -178,7 +188,8 @@ names(imagesSummary)[names(imagesSummary) == "cut(num_imgs, c(min(num_imgs), 10,
 #print out numerical summary
 imagesSummary
 ```
-### In the summary plot you can see if the amount of images affected the average, median, and standard deviation of shares.
+
+#### In the summary plot you can see if the amount of images affected the average, median, and standard deviation of shares.
 
 ### Scatter plot of the image number and shares.
 ```{r EDA 7}
@@ -188,7 +199,8 @@ g6 <- ggplot(trainData, aes(x = num_imgs, y = shares))
 g6 + geom_point() + 
     geom_smooth(method = "lm")
 ```
-### In this scatter plot of the number of images vs. shares, you can see the relationship between the two variables. If it shows an upward trend, articles with more images tend to be shared more often. If the trend is negative, then articles with less images tend to be shared more.
+
+#### In this scatter plot of the number of images vs. shares, you can see the relationship between the two variables. If it shows an upward trend, articles with more images tend to be shared more often. If the trend is negative, then articles with less images tend to be shared more.
 
 ### Scatter plot of the number of videos and shares.
 ```{r EDA 8}
@@ -198,23 +210,28 @@ g7 <- ggplot(trainData, aes(x = num_videos, y = shares))
 g7 + geom_point() + 
     geom_smooth(method = "lm")
 ```
-### In this scatter plot of the number of videos vs. shares, you can see the relationship between the two variables. If it shows an upward trend, articles with more videos tend to be shared more often. If the trend is negative, then articles with less videos tend to be shared more.
+
+#### In this scatter plot of the number of videos vs. shares, you can see the relationship between the two variables. If it shows an upward trend, articles with more videos tend to be shared more often. If the trend is negative, then articles with less videos tend to be shared more.
 
 ## Modeling
 
-### Linear Regression Model
+### Linear Regression Models
 
-A linear regression model allows for easy prediction of a response variable. It's goal is to figure out which variables are significant predictors of the response variable and how do they impact it. 
+#### A linear regression model allows for easy prediction of a response variable. It's goal is to figure out which variables are significant predictors of the response variable and how do they impact it. 
 
 #### This Multiple Linear Regression Model looks at the # of Shares as a function of the # of Words in the Content AND whether or not the Content was published on a Weekend (0 = No, 1 = Yes)
 
 ```{r linearRV1}
+
+## Convert is_weekend to Numeric
+trainData$is_weekend <- as.numeric(trainData$is_weekend)
 
 ## Fit Multiple Linear Regression Model
 fitLM1 <- train(shares ~ n_tokens_content + is_weekend, data = trainData, method = "lm", trControl = trainControl(method = "cv", number = 10))
 fitLM1 
 
 ```
+
 #### This Multiple Linear Regression Model looks at the # of Shares as a function of the # the Quadratic of Title Polarity Sentiment AND the Title Length (Short, Medium, Long)
 
 ```{r linearRV2}
@@ -224,7 +241,9 @@ fitLM2 <- train(shares ~ abs_title_sentiment_polarity^2 + TitleLength, data = tr
 fitLM2
 
 ```
-### This multiple linear regression model looks at day of the week, number of images, and number of videos as predictors and shares as response.
+
+#### This multiple linear regression model looks at day of the week, number of images, and number of videos as predictors and shares as response.
+
 ```{r linearRV3}
 
 #create fit using shares as response, day_of_the_week, num_imgs, and num_videos as the predictors
@@ -238,11 +257,12 @@ fitLM3 <- train(shares ~ day_of_the_week + num_imgs + num_videos, data = trainDa
 fitLM3
 ```
 
-## Random Forest Model
+### Random Forest Model
 
-Random forest modeling is a type of ensemble model that creates multiple trees from bootstrap samples without using all the predictors and a random subset of predictors for each sample. It then averages the results from the multiple trees.
+#### Random forest modeling is a type of ensemble model that creates multiple trees from bootstrap samples without using all the predictors and a random subset of predictors for each sample. It then averages the results from the multiple trees.
 
 ```{r randForest, cache= TRUE}
+
 #use train function
 rfFit <- train(shares ~ day_of_the_week + num_imgs + num_videos + n_tokens_content, data = trainDataNew,
 #use rf method
@@ -254,9 +274,11 @@ rfFit <- train(shares ~ day_of_the_week + num_imgs + num_videos + n_tokens_conte
 rfFit
 ```
 
-### Boosted Tree Model
+#### Boosted Tree Model
 
-```{r boost}
+#### Boosted modeling is a type of ensemble model that grows subsequent trees off of modified version of the original data. Any resulting predictions are updated as your Boosted Tree Model grows, based on criteria like the # of Subsequent Trees, Shrinkage Paramter, etc.
+
+```{r boost, results = 'hide'}
 
 n.trees <- c(5, 10, 25, 100)
 interaction.depth <- 1:4
@@ -276,10 +298,6 @@ boostFit$bestTune
 
 ```{r comparison}
 
-## Combine Linear Model RMSEs into Table
-df<- data.frame(t(fitLM1$results), t(fitLM2$results), t(fitLM3$results))
-df
-
 #Add New Variables (Title Length and Day of the Week) to Test Data
 testData <- testData %>% mutate(TitleLength = if_else(n_tokens_title <= 10, "Short Title",
   if_else(n_tokens_title <= 15, "Medium Title", "Long Title")))
@@ -292,11 +310,21 @@ testData <- testData %>% mutate(day_of_the_week =   if_else(weekday_is_monday ==
                                       if_else(weekday_is_saturday == 1, "Saturday", "Sunday"
                                               ))))))) 
 
-## Obtain RMSE for Random Forest Model
+## Obtain RMSE on Test Data for Linear Models
+predLM1 <- predict(fitLM1, newdata = testData)
+postResample(predLM1, obs = testData$shares)
+
+predLM2 <- predict(fitLM2, newdata = testData)
+postResample(predLM2, obs = testData$shares)
+
+predLM3 <- predict(fitLM3, newdata = testData)
+postResample(predLM3, obs = testData$shares)
+
+## Obtain RMSE on Test Data for Random Forest Model
 predRF <- predict(rfFit, newdata = testData)
 postResample(predRF, testData$shares)
 
-## Obtain RMSE for Boosted Fit Model
+## Obtain RMSE on Test Data for Boosted Fit Model
 predBoost <- predict(boostFit, newdata = testData)
 postResample(predBoost, testData$shares)
 
