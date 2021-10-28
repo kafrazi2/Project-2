@@ -45,24 +45,33 @@ library(readr)
 rawData <- read_csv(file = "./project2_rawdata.csv") 
 rawData
 
-## Subset Data for Entertainment Data Channel
+
+## Create a New Variable to Data Channel
+rawDataNew <- rawData %>% mutate(datachannel =   if_else(data_channel_is_bus == 1, "Business",
+       if_else(data_channel_is_entertainment == 1, "Entertainment",
+               if_else(data_channel_is_lifestyle == 1, "Lifestyle",
+                      if_else(data_channel_is_socmed == 1, "Social Media",
+                              if_else(data_channel_is_tech == 1, "Tech", "World"))))))
+
+## Subset Data for Respective Data Channel
+## AUTOMATION HERE?? REMOVE THIS COMMENT!! ##
 library(dplyr)
-entertainmentData <- rawData %>% filter( data_channel_is_entertainment == 1)
+subsetData <- rawDataNew %>% filter( datachannel == "Entertainment")
 
 ## Create Training and Test Data Sets
 library(caret)
 set.seed(500)
-trainIndex <- createDataPartition(entertainmentData$shares, p = 0.7, list = FALSE)
+trainIndex <- createDataPartition(subsetData$shares, p = 0.7, list = FALSE)
 
-trainData <- entertainmentData[trainIndex,]
-testData <- entertainmentData[-trainIndex,]
+trainData <- subsetData[trainIndex,]
+testData <- subsetData[-trainIndex,]
 
 trainData
 testData
 
 ```
 
-Create new variable day_of_the_week
+### Create new variable day_of_the_week
 ```{r}
 #mutate new variable using weekday_is_() variables
 trainDataNew <- trainData %>% mutate(day_of_the_week =   if_else(weekday_is_monday == 1, "Monday",
@@ -75,12 +84,11 @@ trainDataNew <- trainData %>% mutate(day_of_the_week =   if_else(weekday_is_mond
 trainDataNew
 ```
 
-<<<<<<< HEAD
 =======
 
 ## Exploratory Data Analysis (EDA)
 
-```{r EDA1, message = false}
+```{r EDA1, message = FALSE}
 
 library(ggplot2)
 
@@ -267,8 +275,6 @@ boostFit$bestTune
 
 ```{r comparison}
 
-## Add RF Model ##
-
 ## Combine Linear Model RMSEs into Table
 df<- data.frame(t(fitLM1$results), t(fitLM2$results), t(fitLM3$results))
 df
@@ -295,6 +301,6 @@ postResample(predBoost, testData$shares)
 
 ```
 
-#### Results of Model Selection HERE ####
+#### The model with the lowest RMSE should be used to predict shares as a function of the listed predictor variables, for that particular data channel.  ####
 
 
