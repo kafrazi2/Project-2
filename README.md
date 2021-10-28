@@ -16,6 +16,9 @@ This is the list of the packages used.
 - [`knitr`](https://cran.r-project.org/web/packages/knitr/index.html): a markdown friendly way to display tables
 - [`ggplot2`](https://ggplot2.tidyverse.org/): a package for making graphs and visualizations
 - [`randomForest`](https://www.rdocumentation.org/packages/randomForest/versions/4.6-14/topics/randomForest): helps create random forest models
+- [`readr`](https://readr.tidyverse.org/): a fast and easy way to read in rectangular data
+- [`dplyr`](https://dplyr.tidyverse.org/): aids with data manipulation
+- [`rmarkdown`](https://www.rdocumentation.org/packages/rmarkdown/versions/1.7): adds enhancements to R Markdown
     
 # Links 
 
