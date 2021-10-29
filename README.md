@@ -24,12 +24,12 @@ This is the list of the packages used.
 # Links 
 
 These are links to the generated analyses.
-- [Lifestyle articles is available here](Lifestyle.html).
-- [Entertainment articles is available here](Entertainment.html).
+- [Lifestyle articles is available here](https://kafrazi2.github.io/Project-2/Lifestyle.html).
+- [Entertainment articles is available here](https://kafrazi2.github.io/Project-2/Entertainment.html).
 - [Business articles is available here](https://kafrazi2.github.io/Project-2/Business.html).
-- [Social Media articles is available here](Social-Media.html).
-- [Tech articles is available here](Tech.html).
-- [World articles is available here](World.html).
+- [Social Media articles is available here](https://kafrazi2.github.io/Project-2/Social-Media.html).
+- [Tech articles is available here](https://kafrazi2.github.io/Project-2/Tech.html).
+- [World articles is available here](https://kafrazi2.github.io/Project-2/World.html).
 
 # Code
 
@@ -37,7 +37,7 @@ These are links to the generated analyses.
 #get unique names
 channelIDs <- unique(rawDataNew$data_channel)
 #create file names
-output_file <- paste0(channelIDs, ".html")
+output_file <- paste0(channelIDs, ".md")
 #create a list for each channel with just the channel name parameter
 params = lapply(channelIDs, FUN = function(x){list(data_channel = x)})
 
