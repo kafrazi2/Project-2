@@ -9,7 +9,7 @@ params:
   data_channel: "params$data_channel"
 ---
 
-## Introduction
+# Introduction
 
 #### The following is an analysis of online news popularity across a variety of channels. This analysis covers the following 6 data channels: 
   1. Lifestyle
@@ -81,7 +81,7 @@ testData
 
 =======
 
-## Exploratory Data Analysis (EDA)
+# Exploratory Data Analysis (EDA)
 
 ### Create New Variables for EDA
 ```{r}
@@ -215,7 +215,7 @@ g7 + geom_point() +
 
 #### In this scatter plot of the number of videos vs. shares, you can see the relationship between the two variables. If it shows an upward trend, articles with more videos tend to be shared more often. If the trend is negative, then articles with less videos tend to be shared more.
 
-## Modeling
+# Modeling
 
 ### Linear Regression Models
 
@@ -276,7 +276,7 @@ rfFit <- train(shares ~ day_of_the_week + num_imgs + num_videos + n_tokens_conte
 rfFit
 ```
 
-#### Boosted Tree Model
+### Boosted Tree Model
 
 #### Boosted modeling is a type of ensemble model that grows subsequent trees off of modified version of the original data. Any resulting predictions are updated as your Boosted Tree Model grows, based on criteria like the # of Subsequent Trees, Shrinkage Paramter, etc.
 
@@ -296,7 +296,7 @@ boostFit$bestTune
 
 ```
 
-## Model Comparison and Selection 
+# Model Comparison and Selection 
 
 ```{r comparison}
 
