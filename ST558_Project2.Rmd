@@ -3,7 +3,7 @@ title: "ST 558 Project 2"
 author: "Kaylee Frazier and Rebecca Voelker"
 date: "10/31/2021"
 output: 
-  github_document:
+  github_document: 
     toc: true
 params:
   data_channel: "params$data_channel"
@@ -61,7 +61,7 @@ rawData
 rawDataNew <- rawData %>% mutate(data_channel =   if_else(data_channel_is_bus == 1, "Business",
        if_else(data_channel_is_entertainment == 1, "Entertainment",
                if_else(data_channel_is_lifestyle == 1, "Lifestyle",
-                      if_else(data_channel_is_socmed == 1, "Social Media",
+                      if_else(data_channel_is_socmed == 1, "SocialMedia",
                               if_else(data_channel_is_tech == 1, "Tech", "World"))))))
 
 ## Subset Data for Respective Data Channel
