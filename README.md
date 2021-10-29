@@ -27,7 +27,7 @@ These are links to the generated analyses.
 - [Lifestyle articles is available here](https://kafrazi2.github.io/Project-2/Lifestyle.html).
 - [Entertainment articles is available here](https://kafrazi2.github.io/Project-2/Entertainment.html).
 - [Business articles is available here](https://kafrazi2.github.io/Project-2/Business.html).
-- [Social Media articles is available here](https://kafrazi2.github.io/Project-2/Social%20Media.html).
+- [Social Media articles is available here](https://kafrazi2.github.io/Project-2/SocialMedia.html).
 - [Tech articles is available here](https://kafrazi2.github.io/Project-2/Tech.html).
 - [World articles is available here](https://kafrazi2.github.io/Project-2/World.html).
 
