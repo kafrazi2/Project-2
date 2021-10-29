@@ -26,8 +26,8 @@ This is the list of the packages used.
 These are links to the generated analyses.
 - [Lifestyle articles is available here](Lifestyle.html).
 - [Entertainment articles is available here](Entertainment.html).
-- [Bus articles is available here](Business.html).
-- [Socmed articles is available here](Social-Media.html).
+- [Business articles is available here](Business.html).
+- [Social Media articles is available here](Social-Media.html).
 - [Tech articles is available here](Tech.html).
 - [World articles is available here](World.html).
 
