@@ -26,7 +26,7 @@ This is the list of the packages used.
 These are links to the generated analyses.
 - [Lifestyle articles is available here](Lifestyle.html).
 - [Entertainment articles is available here](Entertainment.html).
-- [Business articles is available here](Business.html).
+- [Business articles is available here](https://kafrazi2.github.io/Project-2/Business.html).
 - [Social Media articles is available here](Social-Media.html).
 - [Tech articles is available here](Tech.html).
 - [World articles is available here](World.html).
