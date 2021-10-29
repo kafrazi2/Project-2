@@ -19,16 +19,17 @@ This is the list of the packages used.
 - [`readr`](https://readr.tidyverse.org/): a fast and easy way to read in rectangular data
 - [`dplyr`](https://dplyr.tidyverse.org/): aids with data manipulation
 - [`rmarkdown`](https://www.rdocumentation.org/packages/rmarkdown/versions/1.7): adds enhancements to R Markdown
+- [`shiny`](https://shiny.rstudio.com/): makes it easy to create interactive webpages from R
     
 # Links 
 
 These are links to the generated analyses.
-- [Lifestyle articles is available here](LifestyleAnalysis.html).
-- [Entertainment articles is available here](EntertainmentAnalysis.html).
-- [Bus articles is available here](BusAnalysis.html).
-- [Socmed articles is available here](SocmedAnalysis.html).
-- [Tech articles is available here](TechAnalysis.html).
-- [World articles is available here](WorldAnalysis.html).
+- [Lifestyle articles is available here](Lifestyle.html).
+- [Entertainment articles is available here](Entertainment.html).
+- [Business articles is available here](Business.html).
+- [Social Media articles is available here](Social-Media.html).
+- [Tech articles is available here](Tech.html).
+- [World articles is available here](World.html).
 
 # Code
 

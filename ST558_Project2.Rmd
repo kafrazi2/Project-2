@@ -2,7 +2,9 @@
 title: "ST 558 Project 2"
 author: "Kaylee Frazier and Rebecca Voelker"
 date: "10/31/2021"
-output: html_document
+output: output: 
+  github_document:
+    toc: true
 params:
   data_channel: "params$data_channel"
 ---
